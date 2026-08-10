@@ -26,7 +26,7 @@ Linux:
 home/<user_name>/maya/<version_number>/
 
 Windows:
-C:\Users\<user_name>\Documents\maya\<version_number>
+C:\Users\user_name\Documents\maya\version_number
 
 MacOS:
 Library/Preferences/Autodesk/maya/<version_number>
