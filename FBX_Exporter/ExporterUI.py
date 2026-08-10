@@ -287,6 +287,9 @@ class FbxExportUI(QMainWindow):
 
         selection:list = exut.get_exportable_selection()
         if not selection:
+            uiu.buildMsg(['Error:', 'Selection is invalid.', ' Select only meshes please.'],
+                         ['red', 'orange', 'blue'],
+                         ['Arial', 12])
             raise Exception('Selection is invalid. Select only meshes please.')
 
         is_referenced:bool = exut.is_referenced(selection[0])
