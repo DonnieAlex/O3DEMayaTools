@@ -17,7 +17,7 @@ It's pretty easy: git clone somewhere on your computer. Open a terminal and cd i
 will live
 ```
 cd /path/to/target/directory
-git clone
+git clone https://github.com/DonnieAlex/O3DEMayaTools.git
 ```
 at this point, we go to our Maya user folder and we want to edit the current installation's .env file. 
 Typical locations would be (depending on OS)
