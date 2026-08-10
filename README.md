@@ -20,7 +20,8 @@ cd /path/to/target/directory
 git clone https://github.com/DonnieAlex/O3DEMayaTools.git
 ```
 at this point, we go to our Maya user folder and we want to edit the current installation's .env file. 
-Typical locations would be (depending on OS)
+Typical locations would be (depending on OS):
+
 Linux:
 home/<user_name>/maya/<version_number>/
 
