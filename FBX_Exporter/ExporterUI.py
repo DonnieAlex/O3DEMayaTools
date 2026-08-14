@@ -547,9 +547,10 @@ class FbxExportUI(QMainWindow):
 
         with open(file_path, 'w') as f:
             json.dump(data, f, indent=4)
+
         uiu.buildMsg(['Info:', ' Configuration saved successfully!'],
                      ['green', 'blue'],
-                     ['Arial'. 12])
+                     ['Arial', 12])
         sys.stdout.write('# Configuration saved to {}\n'.format(file_path))
 
     def load_config(self)->None:
@@ -588,7 +589,7 @@ class FbxExportUI(QMainWindow):
 
         uiu.buildMsg(['Info:', ' Configuration loaded successfully!'],
                      ['green', 'blue'],
-                     ['Arial'. 12])
+                     ['Arial', 12])
         sys.stdout.write('# Configuration loaded from {}\n'.format(file_path))
 
     def clips_to_bookmarks(self):
