@@ -294,7 +294,7 @@ def static_exports_options()->tuple[QWidget, QCheckBox, QCheckBox, QCheckBox]:
     panel.layout().addWidget(zero_rotations_ckbx)
     return panel, lbl, parent_to_world_ckbx, to_center_ckbx, zero_rotations_ckbx
 
-def export_widget()->tuple[QWidget, QPushButton, QCheckBox, QCheckBox, QRadioButton, QRadioButton]:
+def export_widget()->tuple[QWidget, QPushButton, QCheckBox, QCheckBox, QCheckBox, QRadioButton, QRadioButton]:
     panel:QWidget = QWidget()
     panel.setLayout(QVBoxLayout())
     first_lyt:QHBoxLayout = QHBoxLayout()
@@ -307,6 +307,7 @@ def export_widget()->tuple[QWidget, QPushButton, QCheckBox, QCheckBox, QRadioBut
     first_lyt.addStretch()
 
     export_btn:QPushButton = QPushButton('Export')
+    embed_media_ckbx:QCheckBox = QCheckBox('Embed Media')
     export_as_takes_ckbx:QCheckBox = QCheckBox('Export As Takes')
     strip_namespaces_ckbx:QCheckBox = QCheckBox('Remove Namespaces')
 
@@ -317,13 +318,14 @@ def export_widget()->tuple[QWidget, QPushButton, QCheckBox, QCheckBox, QRadioBut
     radio_lyt.addWidget(sing_radio)
     radio_lyt.addWidget(multi_radio)
 
+    first_lyt.addWidget(embed_media_ckbx)
     first_lyt.addWidget(export_as_takes_ckbx)
     first_lyt.addWidget(strip_namespaces_ckbx)
     #panel.layout().addStretch()
     second_lyt.addStretch()
     second_lyt.addLayout(radio_lyt)
     second_lyt.addWidget(export_btn)
-    return panel, export_btn, export_as_takes_ckbx, strip_namespaces_ckbx, sing_radio, multi_radio
+    return panel, export_btn, embed_media_ckbx, export_as_takes_ckbx, strip_namespaces_ckbx, sing_radio, multi_radio
 
 def get_timeslider_bookmarks()->list | None:
     bookmarks:list = mc.ls(type='timeSliderBookmark')

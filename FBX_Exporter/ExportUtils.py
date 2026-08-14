@@ -25,6 +25,7 @@ def export_selection(
                     end_frame:int,
                     as_takes:bool,
                     clips_data:list|None,
+                    embed_media:bool,
 
                     convert_world_axis_animation:bool,
                     anim_only:bool,
@@ -33,7 +34,7 @@ def export_selection(
 
     set_fbx_params(include_anim=include_anim, start_frame=start_frame, end_frame=end_frame,
                    triangulate=triangulate,fbx_type=fbx_type,
-                   up_axis=up_axis,convert_world_axis_animation=convert_world_axis_animation)
+                   up_axis=up_axis, embed_media=embed_media, convert_world_axis_animation=convert_world_axis_animation)
     if add_obj_name:
         file_path:str = build_fbx_file_path(folder_path, file_name, add_obj_name)
     else:
@@ -137,7 +138,7 @@ def fbx_export(file_save_path:str)->None:
     mel.eval('FBXExport -f "{}" -s;'.format(file_save_path))
 
 def set_fbx_params(include_anim:bool, start_frame:int, end_frame:int,
-                   triangulate:bool, fbx_type:str, up_axis:str,
+                   triangulate:bool, fbx_type:str, up_axis:str, embed_media:bool,
                    convert_world_axis_animation:bool)->None:
 
     mel.eval('FBXExportBakeComplexAnimation -v {};'.format(str(include_anim).lower()))
@@ -165,7 +166,7 @@ def set_fbx_params(include_anim:bool, start_frame:int, end_frame:int,
     mel.eval('FBXExportCameras -v false;')
 
     mel.eval('FBXExportTangents -v false;')
-    mel.eval('FBXExportEmbeddedTextures -v true;')
+    mel.eval('FBXExportEmbeddedTextures -v {};'.format(str(embed_media).lower()))
     # hard-coded settings end ^^^^^^^^^
     # file format setting, binary or Ascii?
     mel.eval('FBXExportInAscii -v {};'.format(str(True if fbx_type == 'Ascii' else False).lower()))

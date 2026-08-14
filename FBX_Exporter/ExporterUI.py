@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QWidget, QSplitter, QMainWindow, QLineEdit,
                                QScrollArea, QMenuBar, QMenu
                                )
 
-import json, os
+import json, os, sys
 
 import FBX_Exporter.UI_Utils as uiu
 import FBX_Exporter.ExportUtils as exut
@@ -97,7 +97,7 @@ class FbxExportUI(QMainWindow):
         statics_panel, _, parent_to_world_ckbx, to_center_ckbx, zero_rotations_ckbx = uiu.static_exports_options()
         self.main_widget.layout().addWidget(statics_panel)
 
-        export_panel, export_btn, export_as_takes_ckbx, strip_namespaces_ckbx, sing_file_radio, multi_file_radio = uiu.export_widget()
+        export_panel, export_btn, embed_media_ckbx, export_as_takes_ckbx, strip_namespaces_ckbx, sing_file_radio, multi_file_radio = uiu.export_widget()
         export_as_takes_ckbx.setEnabled(False)
         self.main_widget.layout().addWidget(export_panel)
 
@@ -140,6 +140,7 @@ class FbxExportUI(QMainWindow):
         self.widgets_dict['zero_rotations'] = zero_rotations_ckbx
 
         self.widgets_dict['export'] = export_btn
+        self.widgets_dict['embed_media'] = embed_media_ckbx
         self.widgets_dict['as_takes'] = export_as_takes_ckbx
         self.widgets_dict['strip_namespaces'] = strip_namespaces_ckbx
         self.widgets_dict['sing_file'] = sing_file_radio
@@ -166,6 +167,7 @@ class FbxExportUI(QMainWindow):
             'include_anim',
             'start_frame',
             'end_frame',
+            'embed_media',
             'as_takes',
             'anim_only',
             'strip_namespaces',
@@ -459,9 +461,11 @@ class FbxExportUI(QMainWindow):
 
                     if is_referenced:
                         exut.delete_selection(sel)
-        uiu.buildMsg(['Success:', 'Selection exported successfully!'],
+        uiu.buildMsg(['Info:', 'Selection exported successfully!'],
                      ['green', 'blue'],
                      ['Arial', 12])
+        sys.stdout.write('###\n# Export completed!\n')
+        sys.stdout.flush()
 
     def enable_takes(self):
         export_as_takes_ckbx: QCheckBox = self.widgets_dict['as_takes']
@@ -523,7 +527,7 @@ class FbxExportUI(QMainWindow):
         uiu.open_path(path_line.text())
 
     def save_config(self)->None:
-        print('saving config')
+        sys.stdout.write('# Saving configuration...\n')
         data:dict = self.collect_export_data()
         del data['convert_world_axis_animation']
         path: list | None = uiu.get_save_file_name(self,
@@ -540,13 +544,16 @@ class FbxExportUI(QMainWindow):
             file_name += '.config'
 
         file_path: str = os.path.join(folder_path, file_name)
-        print('Configuration saved to', file_path)
 
         with open(file_path, 'w') as f:
             json.dump(data, f, indent=4)
+        uiu.buildMsg(['Info:', ' Configuration saved successfully!'],
+                     ['green', 'blue'],
+                     ['Arial'. 12])
+        sys.stdout.write('# Configuration saved to {}\n'.format(file_path))
 
     def load_config(self)->None:
-        print('loading config')
+        sys.stdout.write('# Loading configuration...\n')
         path: str | None = uiu.get_open_file_name(self,
                                                   'Load Window Configuration',
                                                   uiu.get_workspace_path(),
@@ -578,6 +585,11 @@ class FbxExportUI(QMainWindow):
             else:
                 for clip in value:
                     self.add_clip(clip)
+
+        uiu.buildMsg(['Info:', ' Configuration loaded successfully!'],
+                     ['green', 'blue'],
+                     ['Arial'. 12])
+        sys.stdout.write('# Configuration loaded from {}\n'.format(file_path))
 
     def clips_to_bookmarks(self):
         out_list: list = list()

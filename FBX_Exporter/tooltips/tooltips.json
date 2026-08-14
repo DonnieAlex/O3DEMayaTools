@@ -29,5 +29,6 @@
     "to_center": ["Static meshes export only:", "Move the selection to the center of the scene.", "NOTE:", "Ignored if ANY deformer is found in your selection (skins or blendshapes)"],
     "zero_rotations": ["Static meshes export only:", "Zero-out any rotations found on the selection.", "NOTE:", "Ignored if ANY deformer is found in your selection (skins or blendshapes)"],
     "sing_file": ["Export the current selection to a single file."],
-    "multi_file": ["Export the current selection to separate files.", "NOTE: Ignored if the selection only contains one item."]
+    "multi_file": ["Export the current selection to separate files.", "NOTE: Ignored if the selection only contains one item."],
+    "embed_media": ["Include textures along with the exported geometry"]
 }
