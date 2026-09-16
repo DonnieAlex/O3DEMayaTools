@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject
 from PySide6.QtGui import *
-from PySide6.QtWidgets import (QWidget, QSplitter, QMainWindow, QLineEdit,
+from PySide6.QtWidgets import (QWidget, QMainWindow, QLineEdit,
                                QComboBox, QCheckBox, QVBoxLayout,
                                QPushButton, QSpinBox, QRadioButton,
                                QScrollArea, QMenuBar, QMenu
@@ -8,7 +8,8 @@ from PySide6.QtWidgets import (QWidget, QSplitter, QMainWindow, QLineEdit,
 
 import json, os, sys
 
-import FBX_Exporter.UI_Utils as uiu
+import UI_Utilities.UI_Utils as uiu
+import UI_Utilities.CompoundWidgets as cw
 import FBX_Exporter.ExportUtils as exut
 import FBX_Exporter.AnimationClipPanel as acp
 
@@ -55,13 +56,13 @@ class FbxExportUI(QMainWindow):
     def build(self):
 
 
-        path_panel, _, path_lnedit, browse_btn, open_fldr_btn = uiu.save_path_widget()
+        path_panel, _, path_lnedit, browse_btn, open_fldr_btn = cw.save_path_widget()
         self.main_widget.layout().addWidget(path_panel)
         file_name_lnedit:QLineEdit = QLineEdit()
         file_name_lnedit.setPlaceholderText('Type file name here.')
         self.main_widget.layout().addWidget(file_name_lnedit)
 
-        options_panel, _, fbx_type_cmb, up_axis_cmb, triangulate_ckbx, incl_anim_ckbx = uiu.fbx_options_widget()
+        options_panel, _, fbx_type_cmb, up_axis_cmb, triangulate_ckbx, incl_anim_ckbx = cw.fbx_options_widget()
         fbx_type_cmb.addItems(['Binary', 'Ascii'])
         up_axis_cmb.addItems(['Y UP', 'Z UP'])
         up_axis_cmb.setCurrentText(axis_map[uiu.get_up_axis()])
@@ -74,10 +75,10 @@ class FbxExportUI(QMainWindow):
         anim_options_panel.setEnabled(False)
         self.main_widget.layout().addWidget(anim_options_panel)
 
-        range_panel, _, start_frame_spn, end_frame_spn, anim_only_ckbx = uiu.animation_range_widget()
+        range_panel, _, start_frame_spn, end_frame_spn, anim_only_ckbx = cw.animation_range_widget()
         anim_options_panel.layout().addWidget(range_panel)
 
-        clips_options_panel, _, add_clip_btn, from_bookmarks_btn, to_bookmarks_btn = uiu.animation_clips_widget()
+        clips_options_panel, _, add_clip_btn, from_bookmarks_btn, to_bookmarks_btn = cw.animation_clips_widget()
         from_bookmarks_btn.setEnabled(bool(uiu.get_timeslider_bookmarks()))
         to_bookmarks_btn.setEnabled(bool(len(self.clip_widgets)))
         anim_options_panel.layout().addWidget(clips_options_panel)
@@ -94,10 +95,10 @@ class FbxExportUI(QMainWindow):
         anim_options_panel.layout().addWidget(anim_clips_scrollarea)
 
 
-        statics_panel, _, parent_to_world_ckbx, to_center_ckbx, zero_rotations_ckbx = uiu.static_exports_options()
+        statics_panel, _, parent_to_world_ckbx, to_center_ckbx, zero_rotations_ckbx = cw.static_exports_options()
         self.main_widget.layout().addWidget(statics_panel)
 
-        export_panel, export_btn, embed_media_ckbx, export_as_takes_ckbx, strip_namespaces_ckbx, sing_file_radio, multi_file_radio = uiu.export_widget()
+        export_panel, export_btn, embed_media_ckbx, export_as_takes_ckbx, strip_namespaces_ckbx, sing_file_radio, multi_file_radio = cw.export_widget()
         export_as_takes_ckbx.setEnabled(False)
         self.main_widget.layout().addWidget(export_panel)
 

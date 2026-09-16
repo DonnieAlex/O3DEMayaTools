@@ -1,0 +1,96 @@
+{
+    "guides_to_hik_map": {
+        "Root": "Reference",
+        "Hip": "UpLeg",
+        "Shoulder": "Arm",
+        "Neck": "Neck",
+        "Ball": "ToeBase",
+        "Pinky": "HandPinky",
+        "Medium": "HandMiddle",
+        "Index": "HandIndex",
+        "Pelvis": "Hips",
+        "Head": "Head",
+        "Wrist": "Hand",
+        "Knee": "Leg",
+        "Thumb": "HandThumb",
+        "Toe": null,
+        "Clavicle": "Shoulder",
+        "Ring": "HandRing",
+        "Elbow": "ForeArm",
+        "Chest": "Spine",
+        "Spine": "Spine",
+        "Ankle": "Foot"
+    },
+    "hik_sides_map": {
+        "L": "Left",
+        "R": "Right"
+    },
+    "default": {
+        "guides_to_joint_map": {
+            "Root": "Root",
+            "Hip": "Thigh",
+            "Shoulder": "Shoulder",
+            "Neck": "Neck",
+            "Ball": "Ball",
+            "Pinky": "Pinky",
+            "Medium": "Medium",
+            "Index": "Index",
+            "Pelvis": "Pelvis",
+            "Head": "Head",
+            "Wrist": "Wrist",
+            "Knee": "Knee",
+            "Thumb": "Thumb",
+            "Toe": "Toe",
+            "Clavicle": "Clavicle",
+            "Ring": "Ring",
+            "Elbow": "Elbow",
+            "Chest": "Chest",
+            "Spine": "Spine",
+            "Ankle": "Ankle",
+            "Tail": "Tail"
+        },
+        "twist": "Twist",
+        "sides": {
+            "L": "L",
+            "R": "R",
+            "B": "B",
+            "F": "F",
+            "U": "U",
+            "D": "D"
+        }
+    },
+    "alternate": {
+        "guides_to_joint_map": {
+            "Root": "root",
+            "Hip": "thigh",
+            "Shoulder": "shoulder",
+            "Neck": "neck",
+            "Ball": "ball",
+            "Pinky": "pinky",
+            "Medium": "medium",
+            "Index": "index",
+            "Pelvis": "pelvis",
+            "Head": "head",
+            "Wrist": "wrist",
+            "Knee": "knee",
+            "Thumb": "thumb",
+            "Toe": "toe",
+            "Clavicle": "clavicle",
+            "Ring": "ring",
+            "Elbow": "elbow",
+            "Chest": "chest",
+            "Spine": "spine",
+            "Ankle": "ankle",
+            "Tail": "tail"
+        },
+        "twist": "twist",
+        "sides": {
+            "L": "left",
+            "R": "right",
+            "B": "back",
+            "F": "front",
+            "U": "up",
+            "D": "down"
+        }
+    }
+}

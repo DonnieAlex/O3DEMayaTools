@@ -12,6 +12,20 @@ where you left off.
 
 It's nothing too complicated or fancy, really. But I hope someone may find it useful :)
 
+### Added on September 2026: 
+A new tool, the <u>Skeleton Builder</u>, has been added to the repo, along with some refactoring of the utility modules (in order to access functions and methods more easily across the two tools).
+Skeleton Builder Tool: This tool is guide based using locators in amodular way, and let you create simple archetype body parts, supporting the traditional Left and Right, plus all the sensible combinations with Up, Down, Front and Back. 
+
+There are modules to create modules from scratch, defining the number of sections per joint (i.e.: the Spine and the fingers), as well as a quick preset section with base parts you will likely need already shaped and sized to an average character. This latter option also works well as an example
+to understand the general guidelines and principles used to create limbs and body parts (like the orientation at the end of a bipedal leg, for example)
+
+It's configuration based (`SkeletonBuilder/configuration/joints_names_configuration.json`), so the joints naming convention can be changed there, allowing the guides to keep their naming. This will need a configuration manager to ease the configuration setup, but I've not come around making it yet.
+
+There is support for managing multiple bind poses, recreating a T-Pose (more suitable for retargeting) with automatic HumanIK characterization, and a simple system to make sure that only one bind pose is active at any time. The active bind pose here is also recognized by the FBX Exporter and used for export of skinned meshes when animation is not included.
+
+Like the FBXExporter, also this tool comes with tooltips on every piece of interface. 
+
+
 # Installation instructions:
 It's pretty easy: git clone somewhere on your computer. Open a terminal and cd into the main folder where this repo folder 
 will live
@@ -53,18 +67,18 @@ and
 PYTHONPATH = other/path/to/another/tool;/path/to/target/directory/O3DEMayaTools
                                        ^ <- separator ; is here on Windows
 ```
-If you had Maya running, it's time to restart it for these changes to be read and used.
-Now, open the script editor, go to a Python tab and type
+~~If you had Maya running, it's time to restart it for these changes to be read and used.~~
+~~Now, open the script editor, go to a Python tab and type~~
 
-```
-import FBX_Exporter.ExporterUI as ui
-ui.FbxExportUI.load_window()
-```
-You can either highlight these two lines and run (play button on the top bar of the script editor OR right click-hold and choose 
+~~```~~
+~~import FBX_Exporter.ExporterUI as ui~~
+~~ui.FbxExportUI.load_window()~~
+~~```~~
+~~You can either highlight these two lines and run (play button on the top bar of the script editor OR right click-hold and choose 
 "execute" from the context menu), or you can save this to a shelf as a button. Choose the shelf you want to use to house this new
 button, then go back to the script editor (where the two lines above should still be highlighted, highlight them again if they're not)
 and middle-click+drag over to the shelf, and drop on it to create the new button. Once the button is there, you can edit it and give it
-a meaningful name, label and description by right-clicking on it and "edit"
-
+a meaningful name, label and description by right-clicking on it and "edit"~~
+The above has been replaced with a userSetup.py script within the package that creates a menu to access the available tools.
 
 Enjoy!

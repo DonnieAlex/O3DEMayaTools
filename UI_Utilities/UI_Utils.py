@@ -7,9 +7,10 @@ from PySide6.QtWidgets import (QWidget, QFileDialog, QLineEdit,
                                QApplication, QRadioButton)
 
 import maya.cmds as mc
+import maya.OpenMaya as om
 
-import platform, subprocess, os
-import random
+import platform, subprocess, os, random, json
+
 
 
 colors = {
@@ -171,6 +172,10 @@ def get_workspace_path()->str:
 def get_up_axis()->str:
     return mc.upAxis(query=True, axis=True)
 
+def set_up_axis(axis:str)->None:
+    mc.upAxis(axis=axis, rotateView=True)
+    mc.viewSet(mc.modelEditor('modelPanel4', query=True, camera=True), persp=True)
+
 def get_platform_open_cmd()->str:
     name:str = platform.system()
     cmd:str
@@ -198,135 +203,6 @@ def open_path(path:str)->None:
                 nline:bytes = line.rstrip()
                 print(nline.decode())
         print('TODO: find out why it won\'t work')
-
-def save_path_widget()->tuple[QWidget, QLabel, QLineEdit, QPushButton, QPushButton]:
-    panel:QWidget = QWidget()
-    panel.setLayout(QHBoxLayout())
-    lbl:QLabel = QLabel('Save Path')
-    path_lnedit:QLineEdit = QLineEdit()
-    path_lnedit.setPlaceholderText('Type the output path, or use the Browse button     ----->')
-    browse_btn:QPushButton = QPushButton('Browse')
-    open_fldr_btn:QPushButton = QPushButton('Open Folder')
-    panel.layout().addWidget(lbl)
-    panel.layout().addWidget(path_lnedit)
-    panel.layout().addWidget(browse_btn)
-    panel.layout().addWidget(open_fldr_btn)
-    return panel, lbl, path_lnedit, browse_btn, open_fldr_btn
-
-def fbx_options_widget()->tuple[QWidget, QLabel, QComboBox, QComboBox, QCheckBox, QCheckBox]:
-    panel:QWidget = QWidget()
-    panel.setLayout(QHBoxLayout())
-    lbl:QLabel = QLabel('FBX Options')
-    fbx_type_cmb:QComboBox = QComboBox()
-    up_axis_cmb:QComboBox = QComboBox()
-    triangulate_ckbx:QCheckBox = QCheckBox('Triangulate')
-    incl_anim_ckbx:QCheckBox = QCheckBox('Include Animation')
-    panel.layout().addWidget(lbl)
-    panel.layout().addStretch()
-    panel.layout().addWidget(fbx_type_cmb)
-    panel.layout().addWidget(up_axis_cmb)
-    panel.layout().addWidget(triangulate_ckbx)
-    panel.layout().addWidget(incl_anim_ckbx)
-    return panel, lbl, fbx_type_cmb, up_axis_cmb, triangulate_ckbx, incl_anim_ckbx
-
-def animation_range_widget()->tuple[QWidget, QLabel, QSpinBox, QSpinBox, QCheckBox]:
-    panel:QWidget = QWidget()
-    panel.setLayout(QHBoxLayout())
-    lbl:QLabel = QLabel('Animation Range')
-    start_frame_spn:QSpinBox = QSpinBox()
-    end_frame_spn:QSpinBox = QSpinBox()
-    start_frame_spn.setRange(0, 10000000)
-    end_frame_spn.setRange(0, 10000000)
-    anim_only_ckbx:QCheckBox = QCheckBox('Animation Only')
-    panel.layout().addWidget(lbl)
-    panel.layout().addStretch()
-    panel.layout().addWidget(start_frame_spn)
-    panel.layout().addWidget(end_frame_spn)
-    panel.layout().addWidget(anim_only_ckbx)
-    return panel, lbl, start_frame_spn, end_frame_spn, anim_only_ckbx
-
-def animation_clips_widget()->tuple[QWidget, QLabel, QPushButton, QPushButton, QPushButton]:
-    panel:QWidget = QWidget()
-    panel.setLayout(QHBoxLayout())
-    lbl:QLabel = QLabel('Clips')
-    add_btn:QPushButton = QPushButton('+')
-
-    from_bookmarks_btn:QPushButton = QPushButton('From Bookmarks')
-    to_bookmarks_btn: QPushButton = QPushButton('To Bookmarks')
-
-    panel.layout().addWidget(lbl)
-    #panel.layout().addStretch()
-    panel.layout().addWidget(add_btn)
-    panel.layout().addStretch()
-    panel.layout().addWidget(from_bookmarks_btn)
-    panel.layout().addWidget(to_bookmarks_btn)
-    return panel, lbl, add_btn, from_bookmarks_btn, to_bookmarks_btn
-
-def configuration_options_widget()->tuple[QWidget, QPushButton, QPushButton]:
-
-    panel: QWidget = QWidget()
-    panel.setLayout(QVBoxLayout())
-    first_lyt:QHBoxLayout = QHBoxLayout()
-    first_lyt.setAlignment(Qt.AlignCenter)
-    second_lyt:QHBoxLayout = QHBoxLayout()
-    panel.layout().addLayout(first_lyt)
-    panel.layout().addLayout(second_lyt)
-
-    lbl: QLabel = QLabel('Configuration')
-    save_btn: QPushButton = QPushButton('Save')
-    load_btn: QPushButton = QPushButton('Load')
-    first_lyt.addWidget(lbl)
-    second_lyt.addWidget(save_btn)
-    second_lyt.addWidget(load_btn)
-    return panel, save_btn, load_btn
-
-def static_exports_options()->tuple[QWidget, QCheckBox, QCheckBox, QCheckBox]:
-    panel: QWidget = QWidget()
-    panel.setLayout(QHBoxLayout())
-    lbl:QLabel = QLabel('Static Meshes')
-    parent_to_world_ckbx:QCheckBox = QCheckBox('Parent to World')
-    to_center_ckbx:QCheckBox = QCheckBox('To Center')
-    zero_rotations_ckbx:QCheckBox = QCheckBox('Zero Rotations')
-    panel.layout().addWidget(lbl)
-    panel.layout().addStretch()
-    panel.layout().addWidget(parent_to_world_ckbx)
-    panel.layout().addWidget(to_center_ckbx)
-    panel.layout().addWidget(zero_rotations_ckbx)
-    return panel, lbl, parent_to_world_ckbx, to_center_ckbx, zero_rotations_ckbx
-
-def export_widget()->tuple[QWidget, QPushButton, QCheckBox, QCheckBox, QCheckBox, QRadioButton, QRadioButton]:
-    panel:QWidget = QWidget()
-    panel.setLayout(QVBoxLayout())
-    first_lyt:QHBoxLayout = QHBoxLayout()
-    second_lyt:QHBoxLayout = QHBoxLayout()
-    panel.layout().addLayout(first_lyt)
-    panel.layout().addLayout(second_lyt)
-
-    lbl:QLabel = QLabel('Extra Export Options')
-    first_lyt.addWidget(lbl)
-    first_lyt.addStretch()
-
-    export_btn:QPushButton = QPushButton('Export')
-    embed_media_ckbx:QCheckBox = QCheckBox('Embed Media')
-    export_as_takes_ckbx:QCheckBox = QCheckBox('Export As Takes')
-    strip_namespaces_ckbx:QCheckBox = QCheckBox('Remove Namespaces')
-
-    radio_lyt:QHBoxLayout = QHBoxLayout()
-    sing_radio:QRadioButton = QRadioButton('Single File')
-    sing_radio.setChecked(True)
-    multi_radio:QRadioButton = QRadioButton('Multiple Files')
-    radio_lyt.addWidget(sing_radio)
-    radio_lyt.addWidget(multi_radio)
-
-    first_lyt.addWidget(embed_media_ckbx)
-    first_lyt.addWidget(export_as_takes_ckbx)
-    first_lyt.addWidget(strip_namespaces_ckbx)
-    #panel.layout().addStretch()
-    second_lyt.addStretch()
-    second_lyt.addLayout(radio_lyt)
-    second_lyt.addWidget(export_btn)
-    return panel, export_btn, embed_media_ckbx, export_as_takes_ckbx, strip_namespaces_ckbx, sing_radio, multi_radio
-
 def get_timeslider_bookmarks()->list | None:
     bookmarks:list = mc.ls(type='timeSliderBookmark')
     if not bookmarks:
@@ -404,3 +280,153 @@ def validate_export_data(export_data:dict)->tuple[bool, list]:
     if errors:
         return True, errors
     return False, ['All good to go.']
+
+
+def setWidgetPalette(widget, color_list, text_color=None):
+    """ convenience method to change a widget color without using stylesheets
+    arguments:
+        widget: type PySide6 widget (any)
+        color: list(int, int, int) 0-255 range | list(float, float, float) 0.0-1.0 range
+
+    """
+    # let's check whether we have a float set range for the color tuple and, if so, convert them
+    # a 0-255 range for Qt to make use of it
+    if isinstance(color_list[0], float):
+        color_list = [
+            int(i * 255)
+            for i in color_list
+        ]
+    palette = QPalette()
+    color = QColor(*color_list)
+    palette.setColor(QPalette.Button, color)
+    palette.setColor(QPalette.Window, color)
+    palette.setColor(QPalette.Base, color)
+    if text_color is not None:
+        if isinstance(text_color[0], float):
+            text_color = [
+                int(i * 255)
+                for i in text_color
+            ]
+        text_qColor = QColor(*text_color)
+        palette.setColor(QPalette.Text, text_qColor)
+        palette.setColor(QPalette.BrightText, text_qColor)
+        palette.setColor(QPalette.ButtonText, text_qColor)
+        palette.setColor(QPalette.WindowText, text_qColor)
+        palette.setColor(QPalette.HighlightedText, text_qColor)
+        palette.setColor(QPalette.Active, QPalette.Text, text_qColor)
+        palette.setColor(QPalette.Active, QPalette.ButtonText, text_qColor)
+        palette.setColor(QPalette.Active, QPalette.WindowText, text_qColor)
+        try:
+            palette.setColor(QPalette.Foreground, text_qColor)
+            palette.setColor(QPalette.Active, QPalette.Foreground, text_qColor)
+        except AttributeError:
+            pass
+        palette.setColor(QPalette.Active, QPalette.HighlightedText, text_qColor)
+
+    widget.setAutoFillBackground(True)
+    widget.setPalette(palette)
+
+def create_guides_list_widget(member_name:str, data:dict) -> QWidget:
+    out_wid:QWidget = QWidget()
+    out_wid.setObjectName(f"{member_name}_widget")
+    out_wid.setLayout(QHBoxLayout())
+    ckbx:QCheckBox = QCheckBox(member_name)
+    ckbx.setChecked(data[member_name][1] if member_name in data else True)
+    out_wid.layout().addWidget(ckbx)
+    if member_name in data:
+        out_wid.layout().addStretch()
+        spinbox:QSpinBox = QSpinBox()
+        spinbox.setMinimum(1)
+        spinbox.setValue(data[member_name][0])
+        out_wid.layout().addWidget(spinbox)
+    return out_wid
+
+def get_existing_section_guides(section:str)->list:
+    locs:list = [mc.listRelatives(i, parent=True, fullPath=True)[0]
+                 for i in mc.ls(type='locator')
+                 ]
+    section_guides:list = [i
+                           for i in locs
+                           if mc.attributeQuery('guidesSection', node=i, exists=True)
+                           ]
+    return [i for i in section_guides if mc.getAttr(f'{i}.guidesSection') == section]
+
+def select_items(items:list)->None:
+    mc.select(items, replace=True)
+
+def list_selected_items(vtx_convert=False)->list:
+    selection:list = mc.ls(orderedSelection=True, long=True)
+    if vtx_convert and not len([i for i in selection if '.vtx[' in i]):
+        mc.ConvertSelectionToVertices()
+        selection = mc.ls(selection=True, long=True, flatten=True)
+    return selection
+
+def get_dag_paths(objs:list)->list[om.MDagPath]:
+    dag_paths: list[om.MDagPath] = list()
+    selList = om.MSelectionList()
+    for obj in objs:
+        selList.add(obj)
+    it: om.MItSelectionList = om.MItSelectionList(selList)
+    while not it.isDone():
+        dag: om.MDagPath = om.MDagPath()
+        it.getDagPath(dag)
+        dag_paths.append(dag)
+        it.next()
+    return dag_paths
+
+def rename(old_name:str, new_name:str)->None:
+    mc.rename(old_name, new_name)
+
+def dump_widgets_to_file_for_tool_tips(widgets_dict:dict, tooltips_path:str)->None:
+    file_data:dict = dict()
+    with open(tooltips_path, 'r') as f:
+        file_data = json.load(f)
+
+    out:dict = {
+        k:'' if not file_data.get(k) else file_data.get(k) for k in widgets_dict.keys()
+    }
+
+    file_data.update(out)
+
+    with open(tooltips_path, 'w') as f:
+        json.dump(file_data, f, indent=4)
+
+def text_input_prompt(message:str='Please enter a name for your preset')->str:
+    prompt:str = mc.promptDialog(title='Preset Name',
+                                 message=message,
+                                 button=['OK', 'Cancel'],
+                                 defaultButton='OK',
+                                 cancelButton='Cancel',
+                                 dismissString='Cancel')
+    if prompt != 'Cancel':
+        prompt = mc.promptDialog(query=True, text=True)
+        if not prompt: prompt = 'Cancel'
+    return prompt
+
+def confirm_dialog(title:str, message:str)->str:
+    conf:str = mc.confirmDialog(title=title,
+                                message=message,
+                                button=['OK', 'Cancel'],
+                                cancelButton='Cancel',
+                                dismissString='Cancel',
+                                defaultButton='OK')
+    return conf
+
+def track_selection_order():
+    if not mc.selectPref(query=True, trackSelectionOrder=True):
+        mc.selectPref(trackSelectionOrder=True)
+        buildMsg(['INFO:', 'Selection order tracking was disabled, enabling it now.', 'Selection order dependant features may not work as expected until next Maya restart.'],
+                 ['yellow', 'orange', 'red'],
+                 ['Arial', 22])
+
+def get_attribute(obj:str, attribute_name:str, kwargs:dict={}):
+    if not kwargs:
+        return mc.getAttr(f'{obj}.{attribute_name}')
+    else:
+        return mc.getAttr(f'{obj}.{attribute_name}', **kwargs)
+
+def attribute_exists(obj:str, attribute_name:str)->bool:
+    return mc.attributeQuery(attribute_name, node=obj, exists=True)
+
+def set_attribute(obj:str, attribute_name:str, value, kwargs:dict={})->None:
+    mc.setAttr(f'{obj}.{attribute_name}', value, **kwargs)

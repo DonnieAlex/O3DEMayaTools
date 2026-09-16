@@ -1,0 +1,49 @@
+{
+  "center": [
+    "Pelvis",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "Tail"
+  ],
+  "arm": [
+    "Clavicle",
+    "Shoulder",
+    "Elbow",
+    "Wrist"
+  ],
+  "leg": [
+    "Hip",
+    "Knee",
+    "Ankle"
+  ],
+  "hand": [
+    "Wrist",
+    "Thumb",
+    "Index",
+    "Medium",
+    "Ring",
+    "Pinky"
+  ],
+  "foot": [
+    "Ankle",
+    "Ball",
+    "Toe",
+    "ToeEnd"
+  ],
+  "chain": [
+    "Link"
+  ],
+  "multi": {
+    "Spine" : [1, true],
+    "Neck" : [1, true],
+    "Tail" : [6, false],
+    "Thumb" : [3, true],
+    "Index" : [3, true],
+    "Medium" : [3, true],
+    "Ring" : [3, true],
+    "Pinky" : [3, true],
+    "Link" : [2, true]
+  }
+}
