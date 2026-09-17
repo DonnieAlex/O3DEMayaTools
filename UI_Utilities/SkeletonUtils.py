@@ -425,13 +425,15 @@ def get_all_guides_hierarchies()->dict|None:
 
 def rebuild_guides_hierarchy(data:dict)->None:
 
+    created:list = list()
     for section, members in data.items():
         for section_data in members:
             for loc, loc_data in section_data.items():
                 loc_name:str = loc.split('|')[-1]
                 mtx:list = loc_data.get('world_matrix')
                 is_root:bool = loc_data.get('isRoot')
-                mc.spaceLocator(name=loc_name)
+                loc_name = mc.spaceLocator(name=loc_name)[0]
+                created.append(loc_name)
                 mc.setAttr(f'{loc_name}.displayLocalAxis', True)
                 if mtx:
                     mc.xform(loc_name, matrix=mtx, worldSpace=True)
@@ -444,10 +446,10 @@ def rebuild_guides_hierarchy(data:dict)->None:
     for section, members in data.items():
         for section_data in members:
             for loc, loc_data in section_data.items():
-                loc_name:str = loc.split('|')[-1]
+                loc_name:str = loc.split('|')[-1] if loc not in created else loc
                 parent:str|None = loc_data.get('parent')
                 if parent:
-                    parent_name:str = parent.split('|')[-1]
+                    parent_name:str = parent.split('|')[-1] if parent not in created else parent
                     if mc.objExists(parent_name):
                         mc.parent(loc_name, parent_name)
 
