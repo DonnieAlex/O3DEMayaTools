@@ -425,33 +425,43 @@ def get_all_guides_hierarchies()->dict|None:
 
 def rebuild_guides_hierarchy(data:dict)->None:
 
-    created:list = list()
+    locators_data:list = list()
     for section, members in data.items():
         for section_data in members:
             for loc, loc_data in section_data.items():
                 loc_name:str = loc.split('|')[-1]
                 mtx:list = loc_data.get('world_matrix')
                 is_root:bool = loc_data.get('isRoot')
-                loc_name = mc.spaceLocator(name=loc_name)[0]
-                created.append(loc_name)
-                mc.setAttr(f'{loc_name}.displayLocalAxis', True)
+                loc_dag:om.MDagPath = uiu.get_dag_paths([mc.spaceLocator(name=loc_name)[0]])[0]
+                mc.setAttr(f'{loc_dag.fullPathName()}.displayLocalAxis', True)
                 if mtx:
-                    mc.xform(loc_name, matrix=mtx, worldSpace=True)
+                    mc.xform(loc_dag.fullPathName(), matrix=mtx, worldSpace=True)
                 if is_root:
-                    add_guide_section_attr(loc_name, section)
+                    add_guide_section_attr(loc_dag.fullPathName(), section)
                     circle, circle_shape = create_root_circle_shape(section, uiu.get_up_axis())
-                    mc.parent(circle_shape, loc_name, relative=True, shape=True)
+                    mc.parent(circle_shape, loc_dag.fullPathName(), relative=True, shape=True)
                     mc.delete(circle)
+                locators_data.append(loc_dag)
     # parenting
     for section, members in data.items():
         for section_data in members:
             for loc, loc_data in section_data.items():
-                loc_name:str = loc.split('|')[-1] if loc not in created else loc
+                loc_name:str = loc.split('|')[-1]
                 parent:str|None = loc_data.get('parent')
+                loc_dag:om.MDagPath = [i
+                                       for i in locators_data
+                                       if loc_name in i.partialPathName().split('|')[-1]
+                                       ][0]
                 if parent:
-                    parent_name:str = parent.split('|')[-1] if parent not in created else parent
+                    parent_name:str = parent.split('|')[-1]
+                    parent_dag:om.MDagPath = [i
+                                              for i in locators_data
+                                              # there could be another locator with the same name not yet parented where it should, so this
+                                              # one may have been automatically renamed to avoid name clashing by appending a number at the end
+                                              if parent_name in i.partialPathName().split('|')[-1]
+                                              ][0]
                     if mc.objExists(parent_name):
-                        mc.parent(loc_name, parent_name)
+                        mc.parent(loc_dag.fullPathName(), parent_dag.fullPathName())
 
     mc.viewFit(allObjects=True)
 
