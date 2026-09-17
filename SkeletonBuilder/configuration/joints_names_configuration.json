@@ -47,7 +47,22 @@
             "Chest": "Chest",
             "Spine": "Spine",
             "Ankle": "Ankle",
-            "Tail": "Tail"
+            "Tail": "Tail",
+            "Jaw": "Jaw",
+            "Tongue": "Tongue",
+            "Face": "Face",
+            "EyebrowBase": "EyebrowBase",
+            "Eyebrow": "Eyebrow",
+            "UpperMouth": "UpperMouth",
+            "UpperLips": "UpperLips",
+            "UpperLipsCorner": "UpperLipsCorner",
+            "LowerMouth": "LowerMouth",
+            "LowerLips": "LowerLips",
+            "Eye": "Eye",
+            "EyeLid": "EyeLid",
+            "Cheek": "Cheek",
+            "Forehead": "Forehead"
+
         },
         "twist": "Twist",
         "sides": {
@@ -56,7 +71,8 @@
             "B": "B",
             "F": "F",
             "U": "U",
-            "D": "D"
+            "D": "D",
+            "C": "C"
         }
     },
     "alternate": {
@@ -81,7 +97,21 @@
             "Chest": "chest",
             "Spine": "spine",
             "Ankle": "ankle",
-            "Tail": "tail"
+            "Tail": "tail",
+            "Jaw": "jaw",
+            "Tongue": "tongue",
+            "Face": "face",
+            "EyebrowBase": "eyebrowbase",
+            "Eyebrow": "eyebrow",
+            "UpperMouth": "uppermouth",
+            "UpperLips": "upperlips",
+            "UpperLipsCorner": "upperlipscorner",
+            "LowerMouth": "lowermouth",
+            "LowerLips": "lowerlips",
+            "Eye": "eye",
+            "EyeLid": "eyelid",
+            "Cheek": "cheek",
+            "Forehead": "forehead"
         },
         "twist": "twist",
         "sides": {
@@ -90,7 +120,8 @@
             "B": "back",
             "F": "front",
             "U": "up",
-            "D": "down"
+            "D": "down",
+            "C": "center"
         }
     }
 }
