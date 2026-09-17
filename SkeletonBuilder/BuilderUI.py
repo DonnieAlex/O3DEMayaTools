@@ -71,7 +71,7 @@ class SkeletonBuilderUI(QMainWindow):
     @guides_presets.setter
     def guides_presets(self, value:dict):
         # self._guides_presets = value
-        self._guides_presets.update(value)
+        self._guides_presets = value
 
     @property
     def input_names(self):
@@ -80,7 +80,7 @@ class SkeletonBuilderUI(QMainWindow):
     @input_names.setter
     def input_names(self, value:dict):
         # self._input_names = value
-        self._input_names.update(value)
+        self._input_names = value
 
     @property
     def joints_names_config(self):
@@ -89,7 +89,7 @@ class SkeletonBuilderUI(QMainWindow):
     @joints_names_config.setter
     def joints_names_config(self, value:dict):
         # self._joints_names = value
-        self._joints_names.update(value)
+        self._joints_names = value
 
     @property
     def configurations_names(self):
@@ -112,7 +112,7 @@ class SkeletonBuilderUI(QMainWindow):
     @guides_hik_map.setter
     def guides_hik_map(self, value:dict):
         # self._guides_hik_map = value
-        self._guides_hik_map.update(value)
+        self._guides_hik_map = value
 
     @property
     def hik_joints_names(self):
@@ -129,7 +129,7 @@ class SkeletonBuilderUI(QMainWindow):
     @hik_joints_ids.setter
     def hik_joints_ids(self, value:dict):
         # self._hik_joints_ids = value
-        self._hik_joints_ids.update(value)
+        self._hik_joints_ids = value
 
     @property
     def hik_to_joints_map(self):
@@ -138,7 +138,7 @@ class SkeletonBuilderUI(QMainWindow):
     @hik_to_joints_map.setter
     def hik_to_joints_map(self, value:dict):
         # self._hik_to_joints = value
-        self._hik_to_joints.update(value)
+        self._hik_to_joints = value
 
     @property
     def hik_sides_map(self):
@@ -147,7 +147,7 @@ class SkeletonBuilderUI(QMainWindow):
     @hik_sides_map.setter
     def hik_sides_map(self, value:dict):
         # self._hik_sides_map = value
-        self._hik_sides_map.update(value)
+        self._hik_sides_map = value
 
     def get_hik_list(self):
         self.hik_joints_ids = su.get_hik_joints_ids()

@@ -479,6 +479,13 @@ def create_joint_name(locator_name:str, guides_to_joint_map:dict, template_data:
             sides.append(sides_data.get(chunk))
         if chunk in guides_to_joint_map:
             name = guides_to_joint_map.get(chunk)
+    if not name:
+        name = [i
+                for i in name_split
+                if i not in sides
+                if i not in sides_data
+                if i != num][0]
+
     side:str = '_'.join(sides)
     return f'{side+"_" if side else ""}{name}{"_"+num if num else ""}'
 
@@ -681,13 +688,18 @@ def get_hik_joint_name(joint_name:str, sides_map:dict, skel_hik_map:dict, templa
     hik_name: str | None = None
     num: int | None = None
     out_name: str = str()
+    sides_translation_map:dict = {v:k
+                                  for k, v in template.get('sides').items()
+                                  }
     for chunk in split_name:
+        translated_side:str|None = sides_translation_map.get(chunk)
         if chunk.isdigit():
             num = int(chunk)
-        elif sides_map.get(chunk):
-            hik_side = sides_map.get(chunk)
+        elif translated_side:
+            hik_side = sides_map.get(translated_side)
         elif skel_hik_map.get(chunk):
             hik_name = skel_hik_map.get(chunk)
+
     if hik_name:
         out_name = f'{hik_side if hik_side else ""}{hik_name}{num if num else ""}'
     return out_name
@@ -702,7 +714,6 @@ def characterize_skeleton(hik_id_map:dict, sides_map:dict, skel_hik_map:dict, te
     for joint in all_joints:
         name:str = joint.split('|')[-1]
         hik_joint_name:str = get_hik_joint_name(name, sides_map, skel_hik_map, template)
-
         if template.get('twist') in name or (not hik_joint_name):
             continue
 
@@ -721,6 +732,8 @@ def characterize_skeleton(hik_id_map:dict, sides_map:dict, skel_hik_map:dict, te
 
     for hik, data in hik_command_map.items():
         joint, hik_id = data
+        if None in data:
+            continue
         assign_joint_to_hik_id(joint, hik_id, char_name)
     try:
         toggle_lock_hik_definition()

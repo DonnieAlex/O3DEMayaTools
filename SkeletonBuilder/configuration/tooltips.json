@@ -58,7 +58,7 @@
     "skin_method_combo": "Skin method to apply to the skin cluster.\nSome game engines support dual quaternion, which helps with maintaining volumes\naround bending areas and avoiding pinched meshes when twisting.",
     "bind_btn": "",
     "hik_panel": "",
-    "hik_btn": "Performs the skeleton's HumanIK characterization process.\nMake sure to have a bind pose created beforehand.",
+    "hik_btn": "Performs the skeleton's HumanIK characterization process.\nNOTE: Make sure to have the matching configuration \nselected under the 'Skeleton Joints Tools' \nand a bind pose created beforehand.",
     "posing_tool_refresh_btn": "Populates the table below with the necessary elements to create a T-Pose for the selected joints.\nRequires a selection of joints (usually arms and legs) to define which\nworld direction they should be pointing at to have a perfect T-Pose.",
     "posing_tool_joints_table": "",
     "posing_tool_make_t_pose_btn": "Generates a new T-Pose from the data in the table above.",
