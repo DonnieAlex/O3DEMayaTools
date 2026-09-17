@@ -73,7 +73,9 @@
             "F": "F",
             "U": "U",
             "D": "D",
-            "C": "C"
+            "C": "C",
+            "I": "I",
+            "O": "O"
         }
     },
     "alternate": {
@@ -123,7 +125,9 @@
             "F": "front",
             "U": "up",
             "D": "down",
-            "C": "center"
+            "C": "center",
+            "I": "inner",
+            "O": "outer"
         }
     }
 }
