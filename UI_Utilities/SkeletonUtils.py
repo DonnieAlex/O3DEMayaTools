@@ -489,26 +489,27 @@ def build_skeleton_from_guides(guides_data:dict, template_data:dict)->None:
                 loc_name:str = loc.split('|')[-1]
                 joint:str = create_joint_name(loc_name, guides_to_joint_map, template_data)
                 joint = create_joint(joint, parented=False)
+                joint_dag:om.MDagPath = uiu.get_dag_paths([joint])[0]
                 mc.xform(joint, matrix=loc_data.get('world_matrix'), worldSpace=True)
                 loc_parent:str|None = loc_data.get('parent')
                 joints_to_guides_list.append(
                     {
-                        'joint' : joint,
+                        'joint' : joint_dag,
                         'locator': loc,
                         'parent_locator': loc_parent,
                     }
                 )
     root:str|None = None
     for joint_data in joints_to_guides_list:
-        joint:str = joint_data.get('joint')
+        joint:om.MDagPath = joint_data.get('joint')
         parent_loc:str = joint_data.get('parent_locator')
         if not parent_loc:
-            root = joint
+            root = joint.fullPathName()
         for jnt_dt in joints_to_guides_list:
             loc:str = jnt_dt.get('locator')
             if parent_loc == loc:
-                parent_joint:str = jnt_dt.get('joint')
-                mc.parent(joint, parent_joint)
+                parent_joint:om.MDagPath = jnt_dt.get('joint')
+                mc.parent(joint.fullPathName(), parent_joint.fullPathName())
 
     if root:
         mc.makeIdentity(root, apply=True, rotate=True, jointOrient=False)
