@@ -686,8 +686,8 @@
     "face_base": {
         "jaw": [
             {
-                "|Face_Root|Jaw_0|Tongue_0|Tongue_1|Tongue_2|Tongue_3": {
-                    "parent": "|Face_Root|Jaw_0|Tongue_0|Tongue_1|Tongue_2",
+                "|Face|Jaw_0|Tongue_0|Tongue_1|Tongue_2|Tongue_3": {
+                    "parent": "|Face|Jaw_0|Tongue_0|Tongue_1|Tongue_2",
                     "world_matrix": [
                         -1.4282716971830329e-15,
                         -0.9983713344239765,
@@ -708,8 +708,8 @@
                     ],
                     "isRoot": false
                 },
-                "|Face_Root|Jaw_0|Tongue_0|Tongue_1|Tongue_2": {
-                    "parent": "|Face_Root|Jaw_0|Tongue_0|Tongue_1",
+                "|Face|Jaw_0|Tongue_0|Tongue_1|Tongue_2": {
+                    "parent": "|Face|Jaw_0|Tongue_0|Tongue_1",
                     "world_matrix": [
                         -1.428271697183033e-15,
                         -0.9983713344239766,
@@ -730,8 +730,8 @@
                     ],
                     "isRoot": false
                 },
-                "|Face_Root|Jaw_0|Tongue_0|Tongue_1": {
-                    "parent": "|Face_Root|Jaw_0|Tongue_0",
+                "|Face|Jaw_0|Tongue_0|Tongue_1": {
+                    "parent": "|Face|Jaw_0|Tongue_0",
                     "world_matrix": [
                         -1.6089641561332536e-15,
                         -0.9850304671557029,
@@ -752,8 +752,8 @@
                     ],
                     "isRoot": false
                 },
-                "|Face_Root|Jaw_0|Tongue_0": {
-                    "parent": "|Face_Root|Jaw_0",
+                "|Face|Jaw_0|Tongue_0": {
+                    "parent": "|Face|Jaw_0",
                     "world_matrix": [
                         -1.53783848300834e-15,
                         -0.992082358326035,
@@ -776,8 +776,8 @@
                 }
             },
             {
-                "|Face_Root|Jaw_0|Jaw_1": {
-                    "parent": "|Face_Root|Jaw_0",
+                "|Face|Jaw_0|Jaw_1": {
+                    "parent": "|Face|Jaw_0",
                     "world_matrix": [
                         -2.139644716646579e-15,
                         -0.746364022531498,
@@ -798,8 +798,8 @@
                     ],
                     "isRoot": false
                 },
-                "|Face_Root|Jaw_0": {
-                    "parent": "|Face_Root",
+                "|Face|Jaw_0": {
+                    "parent": "|Face",
                     "world_matrix": [
                         -2.139644716646579e-15,
                         -0.746364022531498,
@@ -824,7 +824,7 @@
         ],
         "face": [
             {
-                "|Face_Root": {
+                "|Face": {
                     "parent": null,
                     "world_matrix": [
                         -1.3322676295501878e-15,
