@@ -701,7 +701,10 @@ def get_hik_joint_name(joint_name:str, sides_map:dict, skel_hik_map:dict, templa
             hik_name = skel_hik_map.get(chunk)
 
     if hik_name:
-        out_name = f'{hik_side if hik_side else ""}{hik_name}{num if num else ""}'
+        if 'Hand' in hik_name and num is not None and num == 0:
+            out_name = f'{hik_side if hik_side else ""}In{hik_name}'
+        else:
+            out_name = f'{hik_side if hik_side else ""}{hik_name}{num if num else ""}'
     return out_name
 
 
