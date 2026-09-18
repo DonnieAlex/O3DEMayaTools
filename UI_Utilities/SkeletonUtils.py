@@ -794,7 +794,12 @@ def bind_skin(bind_to:str, max_influences:int, bind_method:int, skinning_method:
     if not selection:
         return
     joints:list = mc.ls(selection, type='joint')
-    meshes:list = [i for i in selection if i not in joints]
+    meshes:list = [i
+                   for i in selection
+                   if i not in joints
+                    if mc.nodeType(i) != 'joint'
+                   ]
+
     if (not joints) or (not meshes):
         return
 
@@ -813,14 +818,12 @@ def bind_skin(bind_to:str, max_influences:int, bind_method:int, skinning_method:
         joints.clear()
         joints = mc.listRelatives(root, allDescendents=True, fullPath=True)
         joints.append(root)
+        joints = mc.ls(joints, long=True, type='joint')
 
-
-    selection.clear()
-    selection.extend(joints)
-    selection.extend(meshes)
-    mc.skinCluster(selection, skinMethod=skinning_method, toSelectedBones=True,
-                   obeyMaxInfluences=True, normalizeWeights=1, maximumInfluences=max_influences,
-                   bindMethod=bind_method, weightDistribution=1, dropoffRate=10.0)
+    for mesh in meshes:
+        mc.skinCluster([mesh] + joints, skinMethod=skinning_method, toSelectedBones=True,
+                       obeyMaxInfluences=True, normalizeWeights=1, maximumInfluences=max_influences,
+                       bindMethod=bind_method, weightDistribution=1, dropoffRate=10.0)
 
 def create_tpose_utility_locator(joint:str)->str:
     def round_normalize(vec:list) -> None:
