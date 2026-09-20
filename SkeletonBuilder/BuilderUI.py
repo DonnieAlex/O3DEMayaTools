@@ -30,6 +30,8 @@ class SkeletonBuilderUI(QMainWindow):
     _hik_to_joints:dict = dict()
     _hik_sides_map:dict = dict()
     _guides_presets:dict = dict()
+    _copyweights_source:list = list()
+    _copyweights_destination:list = list()
 
     def __init__(self):
         super().__init__(parent=uiu.find_maya_window())
@@ -63,6 +65,22 @@ class SkeletonBuilderUI(QMainWindow):
         self.add_tool_tips()
 
         self.resize(600, 250)
+
+    @property
+    def copy_weights_sources(self):
+        return self._copyweights_source
+
+    @copy_weights_sources.setter
+    def copy_weights_sources(self, value:list):
+        self._copyweights_source = value
+
+    @property
+    def copy_weights_destinations(self):
+        return self._copyweights_destination
+
+    @copy_weights_destinations.setter
+    def copy_weights_destinations(self, value: list):
+        self._copyweights_destination = value
 
     @property
     def guides_presets(self):
@@ -318,6 +336,8 @@ class SkeletonBuilderUI(QMainWindow):
 
         skinning_panel, influences_number_slider, bind_to_combo, bind_method_combo, skin_method_combo, bind_btn = cw.skinning_panel_widget()
 
+        copy_weights_panel, store_weights_source_btn, store_weights_dest_btn, copy_weights_btn = cw.copy_weights_widget()
+
         self.widgets_dict['root_panel'] = root_panel
         self.widgets_dict['root_orient'] = root_orient_selector
         self.widgets_dict['create_root'] = create_root_btn
@@ -337,6 +357,10 @@ class SkeletonBuilderUI(QMainWindow):
         self.widgets_dict['bind_method_combo'] = bind_method_combo
         self.widgets_dict['skin_method_combo'] = skin_method_combo
         self.widgets_dict['bind_btn'] = bind_btn
+        self.widgets_dict['copy_weights_panel'] = copy_weights_panel
+        self.widgets_dict['store_weights_source_btn'] = store_weights_source_btn
+        self.widgets_dict['store_weights_dest_btn'] = store_weights_dest_btn
+        self.widgets_dict['copy_weights_btn'] = copy_weights_btn
 
     def build_posing_tools_ui(self):
         hik_panel, hik_btn = cw.characterize_widget()
@@ -400,6 +424,11 @@ class SkeletonBuilderUI(QMainWindow):
 
         skinning_panel:QWidget = self.widgets_dict['skinning_panel']
         joints_widget.appendContent(skinning_panel)
+
+        joints_widget.appendContent(cw.create_separator('Copy Weights Utilities'))
+
+        copy_weights_panel:QWidget = self.widgets_dict['copy_weights_panel']
+        joints_widget.appendContent(copy_weights_panel)
 
     def populate_posing_container_widget(self)->None:
         pose_widget: CollapsibleWidgetContainer = self.widgets_dict['pose_tools']
@@ -488,6 +517,33 @@ class SkeletonBuilderUI(QMainWindow):
 
         hik_btn:QPushButton = self.widgets_dict['hik_btn']
         hik_btn.clicked.connect(self.characterize_skeleton)
+
+        store_weights_source_btn:QPushButton = self.widgets_dict['store_weights_source_btn']
+        store_weights_source_btn.clicked.connect(lambda: self.store_weights_lists(source=True))
+
+        store_weights_dest_btn:QPushButton = self.widgets_dict['store_weights_dest_btn']
+        store_weights_dest_btn.clicked.connect(lambda: self.store_weights_lists(source=False))
+
+        copy_weights_btn:QPushButton = self.widgets_dict['copy_weights_btn']
+        copy_weights_btn.clicked.connect(self.perform_weight_copy)
+
+    def store_weights_lists(self, source:bool=True)->None:
+        if source:
+            self.copy_weights_sources = uiu.list_selected_items()
+        else:
+            self.copy_weights_destinations = uiu.list_selected_items()
+
+        uiu.buildMsg([f'{"Source" if source else "Destination"} weights stored.'],
+                     ['blue'],
+                     ['Arial', 12])
+
+    def perform_weight_copy(self)->None:
+        su.copy_skin_weights_special(self.copy_weights_sources, self.copy_weights_destinations)
+        self.copy_weights_sources = list()
+        self.copy_weights_destinations = list()
+        uiu.buildMsg(['Copy weights completed.'],
+                     ['blue'],
+                     ['Arial', 12])
 
     def characterize_skeleton(self)->None:
         hik_id_map:dict = self.hik_joints_ids

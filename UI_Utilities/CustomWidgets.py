@@ -4,6 +4,7 @@ from PySide6.QtWidgets import *
 
 import UI_Utilities.UI_Utils as wf
 import UI_Utilities.SkeletonUtils as su
+import UI_Utilities.CompoundWidgets as cw
 
 class CollapsibleWidgetContainer(QWidget):
     layouts = {
@@ -304,7 +305,7 @@ class GuidesLists(QWidget):
             container_wid.setVisible(False)
             members:list = data.get(name)
             for m in members:
-                member_wid:QWidget = wf.create_guides_list_widget(m, self.multi_joints_data)
+                member_wid:QWidget = cw.create_guides_list_widget(m, self.multi_joints_data)
                 container_wid.layout().addWidget(member_wid)
 
         for container in self.list_to_members.values():

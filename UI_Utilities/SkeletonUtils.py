@@ -976,4 +976,40 @@ def go_to_bind_pose(root_name:str)->None:
         mc.select(root, replace=True)
         mc.GoToBindPose()
 
+def copy_skin_weights_special(source_list:list, destination_list:list)->None:
+    source_check:bool = bool(len([i for i in source_list if '.vtx[' in i]))
+    dest_check:bool = bool(len([i for i in destination_list if '.vtx[' in i]))
+    if source_check or dest_check:
+        _copy_skin_weights_vertices_to_vertices(source_list, destination_list)
+        return
+    _copy_skin_weights_multiple_to_multiple(source_list, destination_list)
+
+def _copy_skin_weights_multiple_to_multiple(source_list:list, destination_list:list)->None:
+    with dyn_selection(None):
+        mc.select(clear=True)
+        for dest in destination_list:
+            mc.select(source_list, replace=True)
+            mc.select(dest, add=True)
+            mc.copySkinWeights(noMirror=True, surfaceAssociation='closestPoint',
+                               influenceAssociation=['oneToOne', 'closestJoint', 'closestBone'],
+                               normalize=True)
+
+def _copy_skin_weights_vertices_to_vertices(source_list:list, destination_list:list)->None:
+    with dyn_selection(None):
+        source_check:bool = len([i for i in source_list if '.vtx[' in i]) == len(source_list)
+        dest_check:bool = len([i for i in destination_list if '.vtx[' in i]) == len(destination_list)
+        if not source_check:
+            mc.select(source_list, replace=True)
+            mc.ConvertSelectionToVertices()
+            source_list= mc.ls(selection=True, long=True, flatten=True)
+        if not dest_check:
+            mc.select(destination_list, replace=True)
+            mc.ConvertSelectionToVertices()
+            destination_list= mc.ls(selection=True, long=True, flatten=True)
+        mc.select(clear=True)
+        mc.select(mc.ls(source_list, long=True, flatten=True), replace=True)
+        mc.select(mc.ls(destination_list, long=True, flatten=True), add=True)
+        mc.copySkinWeights(noMirror=True, surfaceAssociation='closestPoint',
+                           influenceAssociation=['oneToOne', 'closestJoint', 'closestBone'],
+                           normalize=True)
 

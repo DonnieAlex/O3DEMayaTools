@@ -326,21 +326,6 @@ def setWidgetPalette(widget, color_list, text_color=None):
     widget.setAutoFillBackground(True)
     widget.setPalette(palette)
 
-def create_guides_list_widget(member_name:str, data:dict) -> QWidget:
-    out_wid:QWidget = QWidget()
-    out_wid.setObjectName(f"{member_name}_widget")
-    out_wid.setLayout(QHBoxLayout())
-    ckbx:QCheckBox = QCheckBox(member_name)
-    ckbx.setChecked(data[member_name][1] if member_name in data else True)
-    out_wid.layout().addWidget(ckbx)
-    if member_name in data:
-        out_wid.layout().addStretch()
-        spinbox:QSpinBox = QSpinBox()
-        spinbox.setMinimum(1)
-        spinbox.setValue(data[member_name][0])
-        out_wid.layout().addWidget(spinbox)
-    return out_wid
-
 def get_existing_section_guides(section:str)->list:
     locs:list = [mc.listRelatives(i, parent=True, fullPath=True)[0]
                  for i in mc.ls(type='locator')
@@ -355,7 +340,7 @@ def select_items(items:list)->None:
     mc.select(items, replace=True)
 
 def list_selected_items(vtx_convert=False)->list:
-    selection:list = mc.ls(orderedSelection=True, long=True)
+    selection:list = mc.ls(orderedSelection=True, long=True, flatten=True)
     if vtx_convert and not len([i for i in selection if '.vtx[' in i]):
         mc.ConvertSelectionToVertices()
         selection = mc.ls(selection=True, long=True, flatten=True)

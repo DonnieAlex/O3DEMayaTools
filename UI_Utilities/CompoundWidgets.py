@@ -401,6 +401,33 @@ def skinning_panel_widget()->tuple[QWidget, QSlider, QComboBox, QComboBox, QComb
 
     return panel, influences_number_slider, bind_to_combo, bind_method_combo, skin_method_combo, bind_btn
 
+def create_guides_list_widget(member_name:str, data:dict) -> QWidget:
+    out_wid:QWidget = QWidget()
+    out_wid.setObjectName(f"{member_name}_widget")
+    out_wid.setLayout(QHBoxLayout())
+    ckbx:QCheckBox = QCheckBox(member_name)
+    ckbx.setChecked(data[member_name][1] if member_name in data else True)
+    out_wid.layout().addWidget(ckbx)
+    if member_name in data:
+        out_wid.layout().addStretch()
+        spinbox:QSpinBox = QSpinBox()
+        spinbox.setMinimum(1)
+        spinbox.setValue(data[member_name][0])
+        out_wid.layout().addWidget(spinbox)
+    return out_wid
+
+def copy_weights_widget()->tuple[QWidget, QPushButton, QPushButton, QPushButton]:
+    panel:QWidget = QWidget()
+    panel.setLayout(QHBoxLayout())
+    store_source_btn:QPushButton = QPushButton('Sources')
+    store_dest_btn:QPushButton = QPushButton('Destinations')
+    copy_weights_btn:QPushButton = QPushButton('Copy Weights')
+    panel.layout().addWidget(store_source_btn)
+    panel.layout().addWidget(store_dest_btn)
+    panel.layout().addStretch()
+    panel.layout().addWidget(copy_weights_btn)
+    return panel, store_source_btn, store_dest_btn, copy_weights_btn
+
 def characterize_widget()->tuple[QWidget,QPushButton]:
     panel:QWidget = QWidget()
     panel.setLayout(QVBoxLayout())
