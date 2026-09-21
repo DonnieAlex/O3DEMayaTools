@@ -73,5 +73,10 @@
     "pose_list_refresh_btn": "Refreshes the list of all available bind poses.",
     "pose_list_table": "",
     "pose_list_go_to_bindpose_btn": "Goes to the selected bind pose in the list.",
-    "poses_list_wid": ""
+    "poses_list_wid": "",
+    "copy_weights_panel": "",
+    "store_weights_source_btn": "Stores the current selection to be used as the skin weights source.\nThe selection can be multiple objects, vertices or a combination of both.\nNOTE: Weights copy based on UVs can't be performed on sources or destinations that include vertices. \nUV based copy operations support objects only. Also make sure that the source objects share the same uvSet name.",
+    "store_weights_dest_btn": "Stores the current selection to be used as the skin weights copy destination.\nThe selection can be multiple objects, vertices or a combination of both.\nNOTE: Weights copy based on UVs can't be performed on sources or destinations that include vertices. \nUV based copy operations support objects only. Also make sure that the source objects share the same uvSet name.",
+    "uv_based_ckbx": "Whether the skin weights copy should be performed in world space or UV space.",
+    "copy_weights_btn": ""
 }

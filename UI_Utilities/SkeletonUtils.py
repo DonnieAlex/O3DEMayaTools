@@ -976,23 +976,45 @@ def go_to_bind_pose(root_name:str)->None:
         mc.select(root, replace=True)
         mc.GoToBindPose()
 
-def copy_skin_weights_special(source_list:list, destination_list:list)->None:
+def copy_skin_weights_special(source_list:list, destination_list:list, uv_based:bool)->list:
     source_check:bool = bool(len([i for i in source_list if '.vtx[' in i]))
     dest_check:bool = bool(len([i for i in destination_list if '.vtx[' in i]))
     if source_check or dest_check:
+        if uv_based:
+            uiu.buildMsg(['ERROR:', 'Vertex based weight copy does not support UV based sampling.'],
+                         ['red', 'orange'],
+                         ['Arial', 12])
+            return [['ERROR:', 'Vertex based weight copy does not support UV based sampling.'], ['red', 'orange']]
         _copy_skin_weights_vertices_to_vertices(source_list, destination_list)
-        return
-    _copy_skin_weights_multiple_to_multiple(source_list, destination_list)
+        return [['Copy weights completed.'], ['blue']]
 
-def _copy_skin_weights_multiple_to_multiple(source_list:list, destination_list:list)->None:
+    return _copy_skin_weights_multiple_to_multiple(source_list, destination_list, uv_based)
+
+def _copy_skin_weights_multiple_to_multiple(source_list:list, destination_list:list, uv_based:bool)->list:
     with dyn_selection(None):
+        uv_set_check:list = list(set([mc.polyUVSet(i, query=True, currentUVSet=True)[0] for i in source_list]))
+        if len(uv_set_check) > 1:
+            uiu.buildMsg(['ERROR:', 'More than one uvSet name was detected in the source objects.', '\nMake sure that the uvSet names match across all source objects.'],
+                         ['red', 'orange', 'yellow'],
+                         ['Arial', 12])
+            return [['ERROR:', 'More than one uvSet name was detected in the source objects.', '\nMake sure that the uvSet names match across all source objects.'], ['red', 'orange', 'yellow']]
         mc.select(clear=True)
+        kwargs:dict = {
+            'noMirror' : True,
+            'surfaceAssociation' : 'closestPoint',
+            'influenceAssociation' : ['oneToOne', 'closestJoint', 'closestBone'],
+            'normalize' :True
+        }
         for dest in destination_list:
+            if uv_based:
+                kwargs.update({
+                    'uvSpace': [uv_set_check[0], mc.polyUVSet(dest, query=True, currentUVSet=True)[0]]
+                })
+                print(kwargs['uvSpace'])
             mc.select(source_list, replace=True)
             mc.select(dest, add=True)
-            mc.copySkinWeights(noMirror=True, surfaceAssociation='closestPoint',
-                               influenceAssociation=['oneToOne', 'closestJoint', 'closestBone'],
-                               normalize=True)
+            mc.copySkinWeights(**kwargs)
+    return [['Copy weights completed.'], ['blue']]
 
 def _copy_skin_weights_vertices_to_vertices(source_list:list, destination_list:list)->None:
     with dyn_selection(None):

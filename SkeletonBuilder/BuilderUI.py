@@ -336,7 +336,7 @@ class SkeletonBuilderUI(QMainWindow):
 
         skinning_panel, influences_number_slider, bind_to_combo, bind_method_combo, skin_method_combo, bind_btn = cw.skinning_panel_widget()
 
-        copy_weights_panel, store_weights_source_btn, store_weights_dest_btn, copy_weights_btn = cw.copy_weights_widget()
+        copy_weights_panel, store_weights_source_btn, store_weights_dest_btn, uv_based_ckbx, copy_weights_btn = cw.copy_weights_widget()
 
         self.widgets_dict['root_panel'] = root_panel
         self.widgets_dict['root_orient'] = root_orient_selector
@@ -360,6 +360,7 @@ class SkeletonBuilderUI(QMainWindow):
         self.widgets_dict['copy_weights_panel'] = copy_weights_panel
         self.widgets_dict['store_weights_source_btn'] = store_weights_source_btn
         self.widgets_dict['store_weights_dest_btn'] = store_weights_dest_btn
+        self.widgets_dict['uv_based_ckbx'] = uv_based_ckbx
         self.widgets_dict['copy_weights_btn'] = copy_weights_btn
 
     def build_posing_tools_ui(self):
@@ -538,11 +539,16 @@ class SkeletonBuilderUI(QMainWindow):
                      ['Arial', 12])
 
     def perform_weight_copy(self)->None:
-        su.copy_skin_weights_special(self.copy_weights_sources, self.copy_weights_destinations)
+        uv_based_ckbx:QCheckBox = self.widgets_dict['uv_based_ckbx']
+        if not (self.copy_weights_sources and self.copy_weights_destinations):
+            uiu.buildMsg(['ERROR:', 'Either source or destination lists were empty.', '\nMake a selection for both lists to perform a skin weight copy'],
+                         ['red', 'orange', 'yellow'],
+                         ['Arial', 12])
+            return
+        result_msg:list = su.copy_skin_weights_special(self.copy_weights_sources, self.copy_weights_destinations, uv_based_ckbx.isChecked())
         self.copy_weights_sources = list()
         self.copy_weights_destinations = list()
-        uiu.buildMsg(['Copy weights completed.'],
-                     ['blue'],
+        uiu.buildMsg(*result_msg,
                      ['Arial', 12])
 
     def characterize_skeleton(self)->None:

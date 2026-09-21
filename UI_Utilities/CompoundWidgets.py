@@ -416,17 +416,21 @@ def create_guides_list_widget(member_name:str, data:dict) -> QWidget:
         out_wid.layout().addWidget(spinbox)
     return out_wid
 
-def copy_weights_widget()->tuple[QWidget, QPushButton, QPushButton, QPushButton]:
+def copy_weights_widget()->tuple[QWidget, QPushButton, QPushButton, QCheckBox, QPushButton]:
     panel:QWidget = QWidget()
     panel.setLayout(QHBoxLayout())
     store_source_btn:QPushButton = QPushButton('Sources')
     store_dest_btn:QPushButton = QPushButton('Destinations')
     copy_weights_btn:QPushButton = QPushButton('Copy Weights')
+
+    uv_based_ckbx:QCheckBox = QCheckBox('UV Based')
+
     panel.layout().addWidget(store_source_btn)
     panel.layout().addWidget(store_dest_btn)
     panel.layout().addStretch()
+    panel.layout().addWidget(uv_based_ckbx)
     panel.layout().addWidget(copy_weights_btn)
-    return panel, store_source_btn, store_dest_btn, copy_weights_btn
+    return panel, store_source_btn, store_dest_btn, uv_based_ckbx, copy_weights_btn
 
 def characterize_widget()->tuple[QWidget,QPushButton]:
     panel:QWidget = QWidget()
