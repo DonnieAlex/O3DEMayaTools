@@ -992,8 +992,8 @@ def copy_skin_weights_special(source_list:list, destination_list:list, uv_based:
 
 def _copy_skin_weights_multiple_to_multiple(source_list:list, destination_list:list, uv_based:bool)->list:
     with dyn_selection(None):
-        uv_set_check:list = list(set([mc.polyUVSet(i, query=True, currentUVSet=True)[0] for i in source_list]))
-        if len(uv_set_check) > 1:
+        uv_set_check:list = list(set([mc.polyUVSet(i, query=True, currentUVSet=True)[0] for i in source_list if mc.polyUVSet(i, query=True, currentUVSet=True) is not None]))
+        if len(uv_set_check) > 1 and uv_based:
             uiu.buildMsg(['ERROR:', 'More than one uvSet name was detected in the source objects.', '\nMake sure that the uvSet names match across all source objects.'],
                          ['red', 'orange', 'yellow'],
                          ['Arial', 12])
@@ -1010,7 +1010,6 @@ def _copy_skin_weights_multiple_to_multiple(source_list:list, destination_list:l
                 kwargs.update({
                     'uvSpace': [uv_set_check[0], mc.polyUVSet(dest, query=True, currentUVSet=True)[0]]
                 })
-                print(kwargs['uvSpace'])
             mc.select(source_list, replace=True)
             mc.select(dest, add=True)
             mc.copySkinWeights(**kwargs)
@@ -1035,3 +1034,134 @@ def _copy_skin_weights_vertices_to_vertices(source_list:list, destination_list:l
                            influenceAssociation=['oneToOne', 'closestJoint', 'closestBone'],
                            normalize=True)
 
+def slider_groups(slider_name:str)->tuple:
+    slider_main_grp:str = f'{slider_name}_slider_main_group'
+    slider_grp:str = f'{slider_name}_slider_group'
+    if not mc.objExists(slider_main_grp):
+        slider_main_grp: str = mc.group(name=slider_main_grp, empty=True, world=True)
+    if not  mc.objExists(slider_grp):
+        slider_grp: str = mc.group(name=slider_grp, empty=True, world=True)
+    if mc.listRelatives(slider_grp, parent=True) is None:
+        mc.parent(slider_grp, slider_main_grp)
+    return slider_main_grp, slider_grp
+
+def slider_calculation_groups(slider_name:str, direction:str, dir_vector:list, slider_main_grp:str)->tuple:
+
+    pos_grp: str = f'{slider_name}_position_extraction_group'
+    if not mc.objExists(pos_grp):
+        pos_grp = mc.group(name=pos_grp, empty=True, world=True)
+
+    rot_grp: str = f'{slider_name}_rotation{direction.upper()}_extraction_group'
+    if not mc.objExists(rot_grp):
+        rot_grp = mc.group(name=rot_grp, empty=True, world=True)
+        mc.parent(rot_grp, pos_grp)
+        mc.setAttr(f'{rot_grp}.rotate', 0, 0, 0 , type='double3')
+
+    mc.setAttr(f'{rot_grp}.translate', *dir_vector, type='double3')
+    if not mc.listRelatives(pos_grp, parent=True):
+        mc.parent(pos_grp, slider_main_grp)
+    return pos_grp, rot_grp
+
+def slider_plane_intersection_nodes(slider_name:str, direction:str, dir_vector:list, pos_grp:str, rot_grp:str)->tuple:
+    pos_normal_dot_node: str = mc.shadingNode('vectorProduct',
+                                              name=f'{slider_name}_{direction.upper()}_position_normal_vector_dot_product',
+                                              asUtility=True)
+    mc.connectAttr(f'{pos_grp}.translate', f'{pos_normal_dot_node}.input1')
+    mc.connectAttr(f'{rot_grp}.translate', f'{pos_normal_dot_node}.input2')
+
+    normal_dot_node: str = mc.shadingNode('vectorProduct',
+                                          name=f'{slider_name}_{direction.upper()}_normal_vector_dot_product',
+                                          asUtility=True)
+    mc.connectAttr(f'{rot_grp}.translate', f'{normal_dot_node}.input2')
+    mc.setAttr(f'{normal_dot_node}.input1', *dir_vector, type='double3')
+
+    # shadingNode -asUtility multiplyDivide;
+    intersect_mult_node: str = mc.shadingNode('multiplyDivide',
+                                              name=f'{slider_name}_{direction.upper()}_intersect_mult_divide',
+                                              asUtility=True)
+    mc.connectAttr(f'{pos_normal_dot_node}.output', f'{intersect_mult_node}.input1')
+    mc.connectAttr(f'{normal_dot_node}.output', f'{intersect_mult_node}.input2')
+    mc.setAttr(f'{intersect_mult_node}.operation', 2)
+
+    normalized_distance_node: str = mc.shadingNode('multiplyDivide',
+                                                   name=f'{slider_name}_{direction.upper()}_normalized_distance_mult_divide',
+                                                   asUtility=True)
+    mc.connectAttr(f'{intersect_mult_node}.output', f'{normalized_distance_node}.input2')
+    mc.setAttr(f'{normalized_distance_node}.operation', 1)
+    mc.setAttr(f'{normalized_distance_node}.input1', *dir_vector, type='double3')
+    return pos_normal_dot_node, normal_dot_node, intersect_mult_node, normalized_distance_node
+
+def create_slider_tweak_node(source_attr:str, slider_name:str, direction:str, slider_joint:str)->str:
+    tweaker_node: str = mc.shadingNode('floatMath', name=f'{slider_name}_{direction.upper()}_influence_tweak',
+                                       asUtility=True)
+    mc.connectAttr(f'{source_attr}', f'{tweaker_node}.floatA')
+    mc.setAttr(f'{tweaker_node}.operation', 2)
+    attr_name: str = f'slider{direction.upper()}Tweak'
+    if not mc.attributeQuery(attr_name, node=slider_joint, exists=True):
+        mc.addAttr(slider_joint, longName=attr_name, attributeType='double')
+    mc.setAttr(f'{slider_joint}.{attr_name}', 1.0)
+    mc.connectAttr(f'{slider_joint}.{attr_name}', f'{tweaker_node}.floatB')
+    to_slider_attr = f'{tweaker_node}.outFloat'
+    return to_slider_attr
+
+def create_invert_node(source_attr:str, slider_name:str, direction:str)->str:
+    invert_direction_node: str = mc.shadingNode('floatMath', name=f'{slider_name}_{direction.upper()}_invert_direction',
+                                                asUtility=True)
+    mc.connectAttr(f'{source_attr}', f'{invert_direction_node}.floatA')
+    mc.setAttr(f'{invert_direction_node}.operation', 2)
+    mc.setAttr(f'{invert_direction_node}.floatB', -1.0)
+    to_slider_attr = f'{invert_direction_node}.outFloat'
+    return to_slider_attr
+
+def build_slider(parent_joint:str,
+                 rotating_joint:str,
+                 slider_joint:str,
+                 direction:str,
+                 slide_only:bool=True,
+                 linear:bool=True,
+                 invert_direction:bool=False,
+                 tweakable:bool=True
+                 )->None:
+    direction_map:dict = {
+        'x' : [1, 0, 0],
+        'y' : [0, 1, 0],
+        'z' : [0, 0, 1],
+    }
+    dir_vector:list = direction_map.get(direction)
+    slider_name:str = slider_joint.split('|')[-1]
+    slider_main_grp, slider_grp = slider_groups(slider_name)
+    pos_grp, rot_grp = slider_calculation_groups(slider_name, direction, dir_vector, slider_main_grp)
+
+    constraints:list = list()
+    if not [i for i in mc.ls(mc.listHistory(slider_main_grp), type='parentConstraint')]:
+        mc.delete(mc.parentConstraint(slider_joint, slider_main_grp, maintainOffset=False))
+        constraints.extend(mc.parentConstraint(parent_joint, slider_main_grp, maintainOffset=True))
+
+    if not [i for i in mc.ls(mc.listHistory(slider_joint), type='pointConstraint')]:
+        constraints.extend(mc.pointConstraint(slider_grp, slider_joint, maintainOffset=True))
+
+    if not [i for i in mc.ls(mc.listHistory(pos_grp), type='parentConstraint')]:
+        constraints.extend(mc.parentConstraint(parent_joint, rotating_joint, pos_grp, maintainOffset=True, skipRotate=['x', 'y', 'z'] if linear else []))
+    constraints.extend(mc.parentConstraint(parent_joint, rotating_joint, rot_grp, maintainOffset=True, skipRotate=['x', 'y', 'z'] if linear else []))
+
+    pos_normal_dot_node, normal_dot_node, intersect_mult_node, normalized_distance_node = slider_plane_intersection_nodes(slider_name, direction, dir_vector, pos_grp, rot_grp)
+
+    to_slider_attr:str = f'{normalized_distance_node}.output{direction.upper()}'
+    if tweakable:
+        to_slider_attr = create_slider_tweak_node(to_slider_attr, slider_name, direction, slider_joint)
+
+    if invert_direction:
+        to_slider_attr = create_invert_node(to_slider_attr, slider_name, direction)
+
+    mc.connectAttr(to_slider_attr, f'{slider_grp}.translate{direction.upper()}')
+
+    if not slide_only:
+        constraints.extend(mc.orientConstraint(rotating_joint, slider_joint, maintainOffset=True))
+
+    if not constraints:
+        return
+    interp_attr:str = 'interpType'
+    interp_value:int = 2
+    for constraint in constraints:
+        if mc.attributeQuery(interp_attr, node=constraint, exists=True):
+            mc.setAttr(f'{constraint}.{interp_attr}', interp_value)
