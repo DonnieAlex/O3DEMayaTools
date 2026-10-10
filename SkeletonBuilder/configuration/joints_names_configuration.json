@@ -67,6 +67,7 @@
 
         },
         "twist": "Twist",
+        "slider": "Slider",
         "sides": {
             "L": "L",
             "R": "R",
@@ -107,29 +108,30 @@
             "Face": "face",
             "EyebrowBase": "eyebrowbase",
             "Eyebrow": "eyebrow",
-            "UpperMouth": "uppermouth",
-            "UpperLips": "upperlips",
-            "UpperLipsCorner": "upperlipscorner",
-            "LowerMouth": "lowermouth",
-            "LowerLips": "lowerlips",
-            "LowerLipsCorner": "lowerlipscorner",
+            "UpperMouth": "upmouth",
+            "UpperLips": "uplips",
+            "UpperLipsCorner": "uplipscorner",
+            "LowerMouth": "lomouth",
+            "LowerLips": "lolips",
+            "LowerLipsCorner": "lolipscorner",
             "EyeBase": "eyebase",
             "Eye": "eye",
             "EyeLid": "eyelid",
             "Cheek": "cheek",
             "Forehead": "forehead"
         },
-        "twist": "twist",
+        "twist": "tws",
+        "slider": "sld",
         "sides": {
-            "L": "left",
-            "R": "right",
-            "B": "back",
-            "F": "front",
+            "L": "lft",
+            "R": "rgt",
+            "B": "bck",
+            "F": "frt",
             "U": "up",
-            "D": "down",
-            "C": "center",
-            "I": "inner",
-            "O": "outer"
+            "D": "dwn",
+            "C": "ctr",
+            "I": "in",
+            "O": "out"
         }
     }
 }
