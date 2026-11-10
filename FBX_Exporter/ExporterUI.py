@@ -363,7 +363,10 @@ class FbxExportUI(QMainWindow):
                     single_selection = exut.remove_namespaces_from_selection_list(single_selection)
 
                 if exut.selection_includes_skins(single_selection) and (not include_anim):
-                    exut.remove_constraints(exut.get_skel_root(exut.filter_selection_by_type(list(set(single_selection)), 'joint')))
+                    hierarchy_root:str = exut.get_skel_root(exut.filter_selection_by_type(list(set(single_selection)), 'joint'))
+                    exut.remove_constraints(hierarchy_root)
+                    exut.remove_anim_curves(hierarchy_root)
+
                     exut.select_list(single_selection)
                     exut.go_to_bind_pose()
 

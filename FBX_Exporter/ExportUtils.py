@@ -126,6 +126,22 @@ def remove_constraints(hierarchy_root:str)->None:
             constraints.append(child)
     if constraints:
         mc.delete(constraints)
+
+def remove_anim_curves(hierarchy_root:str)->None:
+    """to be used in conjunction with undo_queue() context manager"""
+    hierarchy: list = mc.listRelatives(hierarchy_root, allDescendents=True, fullPath=True) or list()
+    if not hierarchy:
+        return
+    hierarchy = mc.ls(hierarchy, long=True, type='joint')
+    anim_curves:list = list()
+    for jnt in hierarchy:
+        conns:list|None = [i
+                           for i in mc.listConnections(jnt, source=True, destination=False)
+                           if 'animCurve' in mc.nodeType(i)
+                           ]
+        if conns: anim_curves.extend(conns)
+    if anim_curves:
+        mc.delete(anim_curves)
     
 def build_fbx_file_path(file_path:str, file_name:str, add_obj_name:str|None)->str:
     if add_obj_name:
